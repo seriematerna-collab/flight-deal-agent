@@ -1,0 +1,75 @@
+name: flight-deal-monitor
+
+on:
+  schedule:
+    # Wakes up every 30 min to read your command emails. A full price scan only runs
+    # when config.yaml says it's due (every 2 h by default, more often near departure).
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "What to run"
+        type: choice
+        default: normal
+        options: [normal, test-alert, status, pause, resume, force-scan, summary-now, dry-run]
+
+permissions:
+  contents: write      # to commit data/state.json (price history)
+
+concurrency:
+  group: flight-deal-monitor
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run agent
+        env:
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          MODE: ${{ github.event.inputs.mode || 'normal' }}
+        run: |
+          case "$MODE" in
+            test-alert)  python -m agent.main --test-alert ;;
+            status)      python -m agent.main --status ;;
+            pause)       python -m agent.main --pause ;;
+            resume)      python -m agent.main --resume ;;
+            force-scan)  python -m agent.main --force-scan ;;
+            summary-now) python -m agent.main --summary-now ;;
+            dry-run)     python -m agent.main --dry-run --force-scan --summary-now ;;
+            *)           python -m agent.main ;;
+          esac
+
+      - name: Save price history
+        if: always()     # save even when an email failed, so nothing is lost
+        run: |
+          git config user.name "flight-deal-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No state changes"
+            exit 0
+          fi
+          git commit -m "state: update $(date -u +%Y-%m-%dT%H:%MZ)" -q
+          for i in 1 2 3; do
+            git pull --rebase -q && git push -q && exit 0
+            sleep $((i * 5))
+          done
+          echo "::error::Could not push data/state.json"
+          exit 1
