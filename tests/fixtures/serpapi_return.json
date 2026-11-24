@@ -1,0 +1,18 @@
+{
+  "DEP_TOKEN_LA": {
+    "search_metadata": {"status": "Success"},
+    "best_flights": [
+      {"flights": [{"airline": "LATAM", "flight_number": "LA 8065"}, {"airline": "LATAM", "flight_number": "LA 2405"}],
+       "layovers": [{"duration": 135, "id": "GRU"}], "total_duration": 1010, "price": 742,
+       "extensions": [], "booking_token": "BOOK_TOKEN_LA"}
+    ]
+  },
+  "DEP_TOKEN_UX": {
+    "search_metadata": {"status": "Success"},
+    "best_flights": [
+      {"flights": [{"airline": "Air Europa", "flight_number": "UX 173"}],
+       "layovers": [], "total_duration": 760, "price": 880,
+       "extensions": ["1 free carry-on", "1st checked bag free"], "booking_token": "BOOK_TOKEN_UX"}
+    ]
+  }
+}

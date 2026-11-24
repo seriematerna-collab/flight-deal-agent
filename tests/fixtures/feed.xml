@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Sample deal feed</title>
+<item><title>Lima, Peru to Madrid, Spain for only $612 USD roundtrip</title>
+<link>https://example.com/posts/lima-madrid-612</link><pubDate>{NOW_RFC822}</pubDate>
+<category>Lima</category><description>Sample deal</description></item>
+<item><title>ERROR FARE: Lima, Peru to Lisbon, Portugal for $389 roundtrip</title>
+<link>https://example.com/posts/lima-lisbon-error</link><pubDate>{NOW_RFC822}</pubDate><description>x</description></item>
+<item><title>New York to Paris, France for $299 roundtrip</title>
+<link>https://example.com/posts/nyc-paris</link><pubDate>{NOW_RFC822}</pubDate></item>
+<item><title>Lima, Peru to Madrid, Spain for $650 roundtrip</title>
+<link>https://example.com/posts/old</link><pubDate>Mon, 01 Jan 2024 10:00:00 +0000</pubDate></item>
+</channel></rss>

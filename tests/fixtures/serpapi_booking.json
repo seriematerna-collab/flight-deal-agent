@@ -1,0 +1,17 @@
+{
+  "BOOK_TOKEN_LA": {
+    "search_metadata": {"status": "Success", "google_flights_url": "https://www.google.com/travel/flights/booking?LATAM-SAMPLE"},
+    "booking_options": [
+      {"together": {"book_with": "Some OTA", "price": 735, "baggage_prices": ["No checked bags"]}},
+      {"together": {"book_with": "LATAM", "airline": true, "price": 742, "option_title": "Light",
+                    "baggage_prices": ["1 free carry-on", "1st checked bag: 70"]}}
+    ]
+  },
+  "BOOK_TOKEN_UX": {
+    "search_metadata": {"status": "Success", "google_flights_url": "https://www.google.com/travel/flights/booking?UX-SAMPLE"},
+    "booking_options": [
+      {"together": {"book_with": "Air Europa", "airline": true, "price": 880, "option_title": "Lite",
+                    "baggage_prices": ["1 free carry-on", "1st checked bag up to 23 kg free"]}}
+    ]
+  }
+}

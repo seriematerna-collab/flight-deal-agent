@@ -1,0 +1,41 @@
+{
+  "search_metadata": {"status": "Success", "google_flights_url": "https://www.google.com/travel/flights?hl=en&gl=pe&curr=USD&q=SAMPLE"},
+  "best_flights": [
+    {
+      "flights": [
+        {"departure_airport": {"name": "Jorge Chavez International Airport", "id": "LIM", "time": "2027-02-01 19:05"},
+         "arrival_airport": {"name": "Adolfo Suarez Madrid-Barajas Airport", "id": "MAD", "time": "2027-02-02 13:40"},
+         "duration": 695, "airline": "Iberia", "flight_number": "IB 6650", "extensions": ["Average legroom (31 in)"]}
+      ],
+      "layovers": [], "total_duration": 695, "price": 958, "type": "Round trip",
+      "extensions": ["Checked baggage for a fee", "Bag and fare conditions depend on the return flight"],
+      "departure_token": "DEP_TOKEN_IB"
+    },
+    {
+      "flights": [
+        {"departure_airport": {"name": "Jorge Chavez International Airport", "id": "LIM", "time": "2027-02-01 08:10"},
+         "arrival_airport": {"name": "Sao Paulo/Guarulhos International Airport", "id": "GRU", "time": "2027-02-01 15:20"},
+         "duration": 310, "airline": "LATAM", "flight_number": "LA 2404", "extensions": []},
+        {"departure_airport": {"name": "Sao Paulo/Guarulhos International Airport", "id": "GRU", "time": "2027-02-01 17:50"},
+         "arrival_airport": {"name": "Adolfo Suarez Madrid-Barajas Airport", "id": "MAD", "time": "2027-02-02 08:30"},
+         "duration": 580, "airline": "LATAM", "flight_number": "LA 8064", "extensions": []}
+      ],
+      "layovers": [{"duration": 150, "name": "Sao Paulo/Guarulhos International Airport", "id": "GRU"}],
+      "total_duration": 1040, "price": 742, "type": "Round trip", "extensions": [],
+      "departure_token": "DEP_TOKEN_LA"
+    }
+  ],
+  "other_flights": [
+    {
+      "flights": [{"airline": "Copa"}, {"airline": "Copa"}, {"airline": "TAP Air Portugal"}],
+      "layovers": [{"duration": 120, "id": "PTY"}, {"duration": 200, "id": "LIS"}],
+      "total_duration": 1500, "price": 610, "extensions": [], "departure_token": "DEP_TOKEN_2STOP"
+    },
+    {
+      "flights": [{"airline": "Air Europa"}],
+      "layovers": [], "total_duration": 710, "price": 880,
+      "extensions": ["1 free carry-on", "1st checked bag free"], "departure_token": "DEP_TOKEN_UX"
+    }
+  ],
+  "price_insights": {"lowest_price": 742, "price_level": "typical", "typical_price_range": [850, 1150]}
+}

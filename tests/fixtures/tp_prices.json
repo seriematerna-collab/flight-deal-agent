@@ -1,0 +1,18 @@
+{"success": true, "currency": "usd", "data": [
+  {"origin": "LIM", "destination": "MAD", "price": 705, "airline": "UX", "flight_number": "174",
+   "departure_at": "2027-01-30T23:55:00-05:00", "return_at": "2027-04-03T12:10:00+02:00",
+   "transfers": 0, "return_transfers": 0, "duration": 1500, "duration_to": 740, "duration_back": 760,
+   "link": "/search/LIM3001MAD03041?t=SAMPLE"},
+  {"origin": "LIM", "destination": "MAD", "price": 990, "airline": "IB", "flight_number": "6650",
+   "departure_at": "2027-02-02T19:05:00-05:00", "return_at": "2027-03-28T23:50:00+02:00",
+   "transfers": 0, "return_transfers": 0, "duration": 1400, "duration_to": 695, "duration_back": 705,
+   "link": "/search/LIM0202MAD28031?t=SAMPLE2"},
+  {"origin": "LIM", "destination": "MAD", "price": 520, "airline": "XX",
+   "departure_at": "2027-02-20T10:00:00-05:00", "return_at": "2027-04-03T12:10:00+02:00",
+   "transfers": 1, "return_transfers": 1, "duration": 2000, "duration_to": 1000, "duration_back": 1000,
+   "link": "/search/OUTSIDE"},
+  {"origin": "LIM", "destination": "MAD", "price": 480, "airline": "YY",
+   "departure_at": "2027-02-01T10:00:00-05:00", "return_at": "2027-04-01T12:10:00+02:00",
+   "transfers": 2, "return_transfers": 1, "duration": 2500, "duration_to": 1300, "duration_back": 1200,
+   "link": "/search/TWOSTOPS"}
+]}
