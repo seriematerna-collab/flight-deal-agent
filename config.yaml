@@ -1,0 +1,113 @@
+# ---------------------------------------------------------------------------
+# Flight deal agent configuration. Everything you might want to change is here.
+# Secrets (API keys, Telegram token) are NOT here: they live in GitHub Secrets.
+# ---------------------------------------------------------------------------
+
+trip:
+  origin: LIM
+  destination: MAD
+  adults: 1
+  currency: USD
+  outbound:
+    preferred: 2027-02-01
+    flex_days: 5          # scans Jan 27 .. Feb 6
+  return:
+    preferred: 2027-04-01
+    flex_days: 7          # scans Mar 25 .. Apr 8
+  max_stops_per_direction: 1
+  max_duration_hours_per_direction: 30
+
+# Total round-trip price caps (fare + any bag fees needed for that tier), USD.
+caps_usd:
+  no_bag: 800       # personal item only
+  carry_on: 1000
+  checked: 1100
+
+deals:
+  # Rule (b): alert when a tier price is at least this % below the usual price.
+  below_median_pct: 20
+  median_window_days: 30
+  median_min_samples: 20        # until history has this many points, Google's "typical price" is used as the baseline
+  # Rule (c): error fare = below this fraction of the usual price, or below the floor.
+  error_fare_ratio: 0.55
+  error_fare_floor_usd: 450     # any round trip (no bag) under this is treated as a possible error fare
+  sanity_min_price_usd: 120     # anything cheaper is treated as a data glitch and ignored
+  # Sudden-drop rule: a lower, separate threshold that applies at any time.
+  sudden_drop_pct: 10           # price fell >= 10% vs the previous check of the same dates/tier/source
+  sudden_drop_min_usd: 60       # ...and by at least this many dollars
+  sudden_drop_max_vs_cap: 1.25  # ...and the price is no more than 25% above your cap (ignores drops on expensive fares)
+  # No repeats: re-alert the same dates+tier only if the price drops further by at least this much.
+  realert_min_drop_usd: 20
+  realert_min_drop_pct: 2
+  # Ranking: when prices are similar, dates closer to your preferred ones win.
+  # Each day away from a preferred date counts as this many dollars.
+  date_penalty_usd_per_day: 6
+  max_individual_alerts_per_run: 3   # extra deals in the same run are bundled into one message
+
+schedule:
+  timezone: America/Lima
+  # The workflow wakes up every 30 minutes (for /commands). A full scan runs when this interval has passed:
+  base_interval_minutes: 120
+  # Scan more often as the earliest outbound date gets closer (first matching rule wins):
+  closer_intervals:
+    - { days_before: 14, interval_minutes: 30 }
+    - { days_before: 30, interval_minutes: 60 }
+    - { days_before: 60, interval_minutes: 90 }
+  daily_summary_time: "08:00"
+  summary_top_n: 5
+  summary_max_age_days: 7       # prices older than this are left out of the summary
+
+sources:
+  serpapi:                      # Google Flights, live prices. Needs secret SERPAPI_KEY.
+    enabled: true
+    monthly_budget: 240         # free plan = 250/month; 10 kept spare for manual tests
+    max_bucket: 6               # most searches one run can spend
+    enrich_alerts: true         # spend 2 extra searches to get return-leg details + bag prices for promising fares
+    max_enrichments_per_run: 2      # each one costs 2 searches
+    # How strongly to favour dates near the preferred ones (higher = more focus).
+    focus_strength: 5.0
+    hl: en
+    gl: pe
+  travelpayouts:                # Aviasales cached prices, free, whole date window. Needs secret TRAVELPAYOUTS_TOKEN.
+    enabled: true
+    markets: [pe, us, es]       # Aviasales data market(s) to read; more = more coverage
+    # Cached prices can be stale: re-check them on Google Flights before alerting.
+    # If no live check happens within this many hours, the alert is sent marked "cached price".
+    verify_with_serpapi: true
+    cached_alert_after_hours: 12
+  feeds:                        # Deal blogs (RSS) for error fares. No key needed.
+    enabled: true
+    max_age_days: 3
+    origin_keywords: [Lima, Peru, LIM]
+    destination_keywords: [Madrid, Spain, MAD]
+    # Also alert on posts that mention "error fare"/"mistake fare" from your origin to anywhere in Europe:
+    error_fare_keywords: [error fare, mistake fare, glitch]
+    europe_keywords: [Europe, Spain, Madrid, Barcelona, Portugal, Lisbon, Italy, France, Paris]
+    urls:
+      - https://www.secretflying.com/feed/
+  failure_warning_after: 6      # Telegram warning when a source fails this many runs in a row
+
+notifications:
+  email:                        # Secrets: EMAIL_ADDRESS, EMAIL_APP_PASSWORD (and optional EMAIL_TO)
+    smtp_host: smtp.gmail.com   # Gmail defaults; for Outlook/Yahoo see README
+    smtp_port: 465
+    imap_host: imap.gmail.com   # used to read your command emails ("flights pause", ...)
+    commands_enabled: true
+    subject_prefix: "[Flights]" # makes a Gmail filter/label easy
+
+# Optional: known bag fees per airline, USD per bag PER DIRECTION.
+# Used only when the fare itself does not say what bags cost. Leave empty if unsure:
+# unknown baggage is treated as "no bag" and marked "baggage unverified", as you asked.
+# Match is by airline name (case-insensitive substring) or IATA code.
+bag_fees: {}
+#  Example (check the airline's site before relying on these numbers):
+#  "LATAM":   { carry_on: 0,  checked: 60 }
+#  "Iberia":  { carry_on: 0,  checked: 70 }
+
+baggage:
+  # Google lists bag prices per bag; we assume each direction is charged separately (conservative).
+  fee_applies_per_direction: true
+
+storage:
+  path: data/state.json
+  history_points_per_key: 30
