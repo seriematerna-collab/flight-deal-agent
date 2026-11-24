@@ -1,0 +1,1 @@
+"""Flight deal agent."""
