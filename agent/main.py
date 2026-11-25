@@ -15,7 +15,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from . import messages as M
-from .config import ConfigError, Secrets, date_pairs, in_window, load_config
+from .config import ConfigError, Secrets, date_pairs, google_flights_link, in_window, load_config
 from .deals import DealHit, consolidate, evaluate, mark_alerted, new_tiers, record_pair
 from .http import Http
 from .models import Baggage, Offer
@@ -221,7 +221,8 @@ def send_alerts(ctx: ScanContext) -> None:
     fresh.sort(key=lambda h: (not h.error_fare, h.rank))
     n = int(ctx.cfg["deals"]["max_individual_alerts_per_run"])
     for h in fresh[:n]:
-        if ctx.tg.send(M.format_alert(h, ctx.cfg), M.booking_buttons(h.offer.link)):
+        link = h.offer.link or google_flights_link(ctx.cfg, h.offer.out_date, h.offer.ret_date, h.offer.destination)
+        if ctx.tg.send(M.format_alert(h, ctx.cfg), M.booking_buttons(link)):
             mark_alerted(h, ctx.store, ctx.now)
     rest = fresh[n:]
     if rest and ctx.tg.send(M.format_bundle(rest, ctx.cfg)):

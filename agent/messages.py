@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 from html import escape
 from zoneinfo import ZoneInfo
 
-from .config import TIER_LABELS, TIERS, in_window
+from .config import TIER_LABELS, TIERS, google_flights_link, in_window
 from .deals import DealHit, rank_value
 from .models import FeedDeal, Offer
 from .planner import scan_interval_minutes
@@ -60,7 +60,9 @@ def format_alert(hit: DealHit, cfg: dict) -> str:
     t = cfg["trip"]
     p = hit.tiers[hit.primary]
     head = "🚨 POSSIBLE ERROR FARE" if hit.error_fare else "✈️ Flight deal"
-    lines = [f"<b>{head}: {escape(t['origin'])} ⇄ {escape(t['destination'])} {money(p.total)}</b>",
+    dest = o.destination or t["destination"]
+    link = o.link or google_flights_link(cfg, o.out_date, o.ret_date, dest)
+    lines = [f"<b>{head}: {escape(t['origin'])} ⇄ {escape(dest)} {money(p.total)}</b>",
              f"Baggage tier: <b>{TIER_LABELS[hit.primary]}</b>"]
     for tier in TIERS:
         if tier not in hit.tiers:
@@ -87,6 +89,7 @@ def format_alert(hit: DealHit, cfg: dict) -> str:
     else:
         lines.append(f"Return: {day(o.ret_date)} · details not fetched (open the link)")
     lines.append(f"Source: {SOURCE_LABELS.get(o.source, o.source)}")
+    lines.append(f'🔗 <b>Flight link:</b> <a href="{escape(link, quote=True)}">{escape(link)}</a>')
     if o.cached:
         lines.append("ℹ️ Cached price: it may have changed. Not re-checked live yet.")
     return "\n".join(lines)
@@ -98,7 +101,8 @@ def format_bundle(hits: list[DealHit], cfg: dict) -> str:
         tp = h.tiers[h.primary]
         lines.append(f"• {money(tp.total)} {TIER_LABELS[h.primary]} · {h.offer.out_date:%d %b} → "
                      f"{h.offer.ret_date:%d %b} · {escape(h.offer.airline)} · "
-                     f"<a href=\"{escape(h.offer.link, quote=True)}\">link</a>")
+                     f"{escape(h.offer.destination or cfg['trip']['destination'])} · "
+                     f"<a href=\"{escape(h.offer.link or google_flights_link(cfg, h.offer.out_date, h.offer.ret_date, h.offer.destination), quote=True)}\">view flight</a>")
     return "\n".join(lines)
 
 
@@ -149,7 +153,8 @@ def _trend(store: Store, tier: str, now: datetime) -> str:
 def format_summary(store: Store, cfg: dict, now: datetime) -> str:
     n = int(cfg["schedule"]["summary_top_n"])
     t = cfg["trip"]
-    lines = [f"<b>☀️ Daily flight summary {escape(t['origin'])} ⇄ {escape(t['destination'])}</b>"]
+    dests = " / ".join(t.get("destinations") or [t["destination"]])
+    lines = [f"<b>☀️ Daily flight summary {escape(t['origin'])} ⇄ {escape(dests)}</b>"]
     for tier in TIERS:
         cap = cfg["caps_usd"][tier]
         lines.append(f"\n<b>{TIER_LABELS[tier]}</b> (cap {money(cap)})")
@@ -161,9 +166,13 @@ def format_summary(store: Store, cfg: dict, now: datetime) -> str:
             o_s, r_s = pair.split("|")
             flag = "✓" if v.get("verified") else "⚠️ unverified"
             under = " ✅" if v["price"] <= cap else ""
-            lines.append(f"  {i}. <b>{money(v['price'])}</b>{under} {date.fromisoformat(o_s):%d %b} → "
-                         f"{date.fromisoformat(r_s):%d %b} · {escape(str(v.get('airline', '?')))} · "
-                         f"{'cached' if v.get('cached') else 'live'} {ago(v['ts'], now)} · {flag}")
+            o_d, r_d = date.fromisoformat(o_s), date.fromisoformat(r_s)
+            dest = v.get("dest") or t["destination"]
+            link = v.get("link") or google_flights_link(cfg, o_d, r_d, dest)
+            lines.append(f"  {i}. <b>{money(v['price'])}</b>{under} {escape(dest)} · {o_d:%d %b} → "
+                         f"{r_d:%d %b} · {escape(str(v.get('airline', '?')))} · "
+                         f"{'cached' if v.get('cached') else 'live'} {ago(v['ts'], now)} · {flag} · "
+                         f'<a href="{escape(link, quote=True)}">view flight</a>')
         lines.append(f"  Trend: {_trend(store, tier, now)}")
     left = store.state["serpapi"].get("searches_left")
     if left is not None:

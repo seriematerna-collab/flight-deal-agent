@@ -123,6 +123,7 @@ def record_pair(offers: list[Offer], store: Store, cfg: dict, now: datetime) -> 
             store.state["latest"][key] = {
                 "price": round(tp.total, 2), "ts": iso(now), "source": offer.source, "cached": offer.cached,
                 "note": tp.note, "verified": tp.verified, "airline": offer.airline,
+                "dest": offer.destination,
                 "stops_out": offer.stops_out, "stops_ret": offer.stops_ret, "link": offer.link,
             }
 

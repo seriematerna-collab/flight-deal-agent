@@ -66,6 +66,10 @@ def load_config(path: str | Path = "config.yaml") -> dict:
             trip[leg]["flex_days"] = int(trip[leg]["flex_days"])
             if trip[leg]["flex_days"] < 0:
                 raise ConfigError(f"trip.{leg}.flex_days must be >= 0")
+        alts = trip.get("alternative_destinations") or []
+        if isinstance(alts, str):
+            alts = [a.strip() for a in alts.split(",") if a.strip()]
+        trip["destinations"] = [trip["destination"]] + [a for a in alts if a != trip["destination"]]
         if trip["return"]["preferred"] <= trip["outbound"]["preferred"]:
             raise ConfigError("trip.return.preferred must be after trip.outbound.preferred")
         for t in TIERS:
@@ -80,6 +84,14 @@ def load_config(path: str | Path = "config.yaml") -> dict:
     except KeyError as e:
         raise ConfigError(f"Missing config key: {e}") from e
     return cfg
+
+
+def google_flights_link(cfg: dict, out_d, ret_d, dest: str | None = None) -> str:
+    """Plain Google Flights search link for one route + dates (used when no booking link is known)."""
+    from urllib.parse import quote
+    t = cfg["trip"]
+    q = f"Flights from {t['origin']} to {dest or t['destination']} on {out_d.isoformat()} through {ret_d.isoformat()}"
+    return f"https://www.google.com/travel/flights?q={quote(q)}&curr={t.get('currency', 'USD')}"
 
 
 def date_window(cfg: dict, leg: str) -> list[date]:

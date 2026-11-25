@@ -45,7 +45,9 @@ def parse_command(subject: str) -> str | None:
 
 
 def to_plain(html_text: str) -> str:
-    text = re.sub(r'<a href="([^"]+)">([^<]*)</a>', r"\2 (\1)", html_text)
+    text = re.sub(r'<a href="([^"]+)">([^<]*)</a>',
+                  lambda m: m.group(2) if unescape(m.group(2)) == unescape(m.group(1)) else f"{m.group(2)} ({m.group(1)})",
+                  html_text)
     return unescape(TAG_RE.sub("", text))
 
 

@@ -25,6 +25,7 @@ class Offer:
     ret_date: date
     price: float                # round-trip fare in USD as found (no bags added)
     airline: str = "?"
+    destination: str = ""       # arrival airport, e.g. MAD or BCN
     stops_out: int | None = None
     stops_ret: int | None = None
     duration_out_min: int | None = None
