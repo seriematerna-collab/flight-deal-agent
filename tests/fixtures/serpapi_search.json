@@ -32,7 +32,7 @@
       "total_duration": 1500, "price": 610, "extensions": [], "departure_token": "DEP_TOKEN_2STOP"
     },
     {
-      "flights": [{"airline": "Air Europa"}],
+      "flights": [{"airline": "Air Europa", "arrival_airport": {"name": "Barcelona-El Prat Airport", "id": "BCN"}}],
       "layovers": [], "total_duration": 710, "price": 880,
       "extensions": ["1 free carry-on", "1st checked bag free"], "departure_token": "DEP_TOKEN_UX"
     }
