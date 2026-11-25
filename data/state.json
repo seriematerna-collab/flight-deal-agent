@@ -1,0 +1,30 @@
+{
+ "alerts_sent": {},
+ "daily_min": {},
+ "email_last_uid": null,
+ "email_uidvalidity": null,
+ "enrich_cache": {},
+ "feed_seen": {},
+ "google_typical": null,
+ "history": {},
+ "last_run": "2026-11-25T00:50:34+00:00",
+ "last_scan": "2026-11-25T00:50:34+00:00",
+ "last_summary_date": null,
+ "latest": {},
+ "paused": false,
+ "serpapi": {
+  "credits": 3.0,
+  "last_accrual": null,
+  "pair_last_scan": {},
+  "searches_left": null
+ },
+ "sources": {
+  "deal_feeds": {
+   "error": "SourceError: https://www.secretflying.com/feed/: not well-formed (invalid token): line 9, column 42",
+   "fail_streak": 1,
+   "last_error": "2026-11-25T00:50:34+00:00"
+  }
+ },
+ "verify_queue": {},
+ "version": 1
+}
