@@ -26,7 +26,10 @@ NOW = datetime(2026, 11, 25, 15, 0, tzinfo=timezone.utc)
 
 @pytest.fixture
 def cfg():
-    return load_config(ROOT / "config.yaml")
+    c = load_config(ROOT / "config.yaml")
+    c["sources"]["travelpayouts"]["enabled"] = True   # tests cover every source, even if disabled in config
+    c["sources"]["feeds"]["enabled"] = True
+    return c
 
 
 @pytest.fixture
@@ -346,3 +349,25 @@ def test_send_to_other_addresses(cfg):
     # the Pause button writes to the agent's inbox, and a command sent from mary@hotmail.com is accepted
     assert "mailto:agent@gmail.com" in msg.get_body(("html",)).get_content()
     assert "mary@hotmail.com" in n.to_list
+
+
+def test_alternative_destination_and_link(cfg, store):
+    http = FixtureHttp()
+    gf = GoogleFlights(http, cfg, "k")
+    offers, _ = gf.search_pair(date(2027, 2, 1), date(2027, 4, 1))
+    assert http.calls[-1][1]["arrival_id"] == "MAD,BCN"          # one search covers both cities
+    assert {o.airline: o.destination for o in offers}["Air Europa"] == "BCN"
+    assert {o.airline: o.destination for o in offers}["LATAM"] == "MAD"
+    from agent import messages as M
+    ux = next(o for o in offers if o.airline == "Air Europa")
+    text = M.format_alert(evaluate(ux, store, cfg, NOW), cfg)
+    assert "LIM ⇄ BCN" in text and "Flight link:" in text and "https://www.google.com/travel/flights" in text
+
+
+def test_link_fallback_when_missing(cfg, store):
+    from agent import messages as M
+    o = offer(700)
+    o.link = ""
+    o.destination = "BCN"
+    text = M.format_alert(evaluate(o, store, cfg, NOW), cfg)
+    assert "travel/flights?q=Flights%20from%20LIM%20to%20BCN%20on%202027-02-01%20through%202027-04-01" in text
