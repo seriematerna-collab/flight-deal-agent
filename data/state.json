@@ -1,28 +1,65 @@
 {
  "alerts_sent": {},
- "daily_min": {},
- "email_last_uid": null,
- "email_uidvalidity": null,
+ "daily_min": {
+  "no_bag": {
+   "2026-11-25": 1207.0
+  }
+ },
+ "email_last_uid": 132,
+ "email_uidvalidity": "1",
  "enrich_cache": {},
  "feed_seen": {},
  "google_typical": null,
- "history": {},
- "last_run": "2026-11-25T02:11:05+00:00",
- "last_scan": "2026-11-25T00:50:34+00:00",
- "last_summary_date": null,
- "latest": {},
+ "history": {
+  "2027-02-01|2027-04-01|no_bag": [
+   [
+    "2026-11-25T02:23:04+00:00",
+    1207.0,
+    "google_flights"
+   ]
+  ]
+ },
+ "last_run": "2026-11-25T02:23:04+00:00",
+ "last_scan": "2026-11-25T02:23:04+00:00",
+ "last_summary_date": "2026-11-24",
+ "latest": {
+  "2027-02-01|2027-04-01|no_bag": {
+   "airline": "Avianca",
+   "cached": false,
+   "link": "https://www.google.com/travel/flights?hl=en&gl=pe&curr=USD&tfs=CBwQAhojEgoyMDI3LTAyLTAxKAFgiA5qBwgBEgNMSU1yBwgBEgNNQUQaIxIKMjAyNy0wNC0wMSgBYIgOagcIARIDTUFEcgcIARIDTElNQAFIAXABmAEB&tfu=EgIIAQ",
+   "note": "baggage unverified",
+   "price": 1207.0,
+   "source": "google_flights",
+   "stops_out": 1,
+   "stops_ret": null,
+   "ts": "2026-11-25T02:23:04+00:00",
+   "verified": false
+  }
+ },
  "paused": false,
  "serpapi": {
-  "credits": 3.0,
-  "last_accrual": null,
-  "pair_last_scan": {},
-  "searches_left": null
+  "credits": 2.0,
+  "last_accrual": "2026-11-25T02:23:04+00:00",
+  "pair_last_scan": {
+   "2027-02-01|2027-04-01": "2026-11-25T02:23:04+00:00"
+  },
+  "searches_left": 249
  },
  "sources": {
+  "aviasales_cache": {
+   "fail_streak": 0,
+   "last_ok": "2026-11-25T02:23:04+00:00",
+   "warned": false
+  },
   "deal_feeds": {
    "error": "SourceError: https://www.secretflying.com/feed/: not well-formed (invalid token): line 9, column 42",
-   "fail_streak": 1,
-   "last_error": "2026-11-25T00:50:34+00:00"
+   "fail_streak": 2,
+   "last_error": "2026-11-25T02:23:04+00:00"
+  },
+  "google_flights": {
+   "fail_streak": 0,
+   "last_ok": "2026-11-25T02:23:04+00:00",
+   "warned": false
   }
  },
  "verify_queue": {},
