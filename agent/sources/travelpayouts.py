@@ -92,6 +92,7 @@ class AviasalesCache:
         link = str(row.get("link") or "")
         return Offer(
             source=self.name, out_date=out_d, ret_date=ret_d, price=price,
+            destination=self.cfg["trip"]["destination"],
             airline=AIRLINE_NAMES.get(code, code),
             stops_out=st_out, stops_ret=st_ret, duration_out_min=d_out, duration_ret_min=d_ret,
             link=("https://www.aviasales.com" + (link if link.startswith("/") else "/" + link)) if link else

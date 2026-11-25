@@ -10,6 +10,7 @@ import logging
 from datetime import date
 
 from ..baggage import merge, parse_baggage_strings
+from ..config import google_flights_link
 from ..http import Http, HttpError
 from ..models import Offer
 from . import SourceError
@@ -39,7 +40,7 @@ class GoogleFlights:
         return {
             "engine": "google_flights",
             "departure_id": t["origin"],
-            "arrival_id": t["destination"],
+            "arrival_id": ",".join(t.get("destinations") or [t["destination"]]),
             "outbound_date": out_d.isoformat(),
             "return_date": ret_d.isoformat(),
             "type": 1,
@@ -93,6 +94,7 @@ class GoogleFlights:
             "price_insights": data.get("price_insights") or {},
         }
         offers: list[Offer] = []
+        default_dest = self.cfg["trip"]["destination"]
         for it in (data.get("best_flights") or []) + (data.get("other_flights") or []):
             price = it.get("price")
             if not isinstance(price, (int, float)):
@@ -106,9 +108,11 @@ class GoogleFlights:
                 out_date=out_d, ret_date=ret_d,
                 price=float(price),
                 airline=_airlines(it),
+                destination=_arrival(it) or default_dest,
                 stops_out=stops,
                 duration_out_min=dur,
-                link=meta["url"],
+                # route-specific Google Flights link; replaced by the exact booking page when enriched
+                link=google_flights_link(self.cfg, out_d, ret_d, _arrival(it) or default_dest),
                 baggage=parse_baggage_strings(it.get("extensions") or [], "google-extensions"),
                 departure_token=it.get("departure_token"),
             ))
@@ -164,6 +168,13 @@ def _airlines(it: dict) -> str:
         if a and a not in names:
             names.append(a)
     return " + ".join(names) if names else "?"
+
+
+def _arrival(it: dict) -> str:
+    segs = it.get("flights") or []
+    if not segs:
+        return ""
+    return str((segs[-1].get("arrival_airport") or {}).get("id") or "")
 
 
 def _booking_bag_strings(b: dict) -> list[str]:
