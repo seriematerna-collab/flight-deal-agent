@@ -69,14 +69,16 @@ sources:
     hl: en
     gl: pe
   travelpayouts:                # Aviasales cached prices, free, whole date window. Needs secret TRAVELPAYOUTS_TOKEN.
-    enabled: true
+    # Disabled: this API only supports trips of up to 30 days; this trip is ~2 months.
+    enabled: false
     markets: [pe, us, es]       # Aviasales data market(s) to read; more = more coverage
     # Cached prices can be stale: re-check them on Google Flights before alerting.
     # If no live check happens within this many hours, the alert is sent marked "cached price".
     verify_with_serpapi: true
     cached_alert_after_hours: 12
   feeds:                        # Deal blogs (RSS) for error fares. No key needed.
-    enabled: true
+    # Disabled: Secret Flying blocks GitHub's servers (returns a bot-check page instead of the feed).
+    enabled: false
     max_age_days: 3
     origin_keywords: [Lima, Peru, LIM]
     destination_keywords: [Madrid, Spain, MAD]
