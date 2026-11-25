@@ -2,7 +2,7 @@
  "alerts_sent": {},
  "daily_min": {
   "no_bag": {
-   "2026-11-25": 1207.0
+   "2026-11-25": 1205.0
   }
  },
  "email_last_uid": 132,
@@ -11,18 +11,45 @@
  "feed_seen": {},
  "google_typical": null,
  "history": {
+  "2027-02-01|2027-03-31|no_bag": [
+   [
+    "2026-11-25T04:36:29+00:00",
+    1206.0,
+    "google_flights"
+   ]
+  ],
   "2027-02-01|2027-04-01|no_bag": [
    [
     "2026-11-25T02:23:04+00:00",
     1207.0,
     "google_flights"
    ]
+  ],
+  "2027-02-01|2027-04-02|no_bag": [
+   [
+    "2026-11-25T04:36:29+00:00",
+    1205.0,
+    "google_flights"
+   ]
   ]
  },
- "last_run": "2026-11-25T03:26:19+00:00",
- "last_scan": "2026-11-25T02:23:04+00:00",
+ "last_run": "2026-11-25T04:36:29+00:00",
+ "last_scan": "2026-11-25T04:36:29+00:00",
  "last_summary_date": "2026-11-24",
  "latest": {
+  "2027-02-01|2027-03-31|no_bag": {
+   "airline": "Avianca",
+   "cached": false,
+   "dest": "MAD",
+   "link": "https://www.google.com/travel/flights?q=Flights%20from%20LIM%20to%20MAD%20on%202027-02-01%20through%202027-03-31&curr=USD",
+   "note": "baggage unverified",
+   "price": 1206.0,
+   "source": "google_flights",
+   "stops_out": 1,
+   "stops_ret": null,
+   "ts": "2026-11-25T04:36:29+00:00",
+   "verified": false
+  },
   "2027-02-01|2027-04-01|no_bag": {
    "airline": "Avianca",
    "cached": false,
@@ -34,16 +61,31 @@
    "stops_ret": null,
    "ts": "2026-11-25T02:23:04+00:00",
    "verified": false
+  },
+  "2027-02-01|2027-04-02|no_bag": {
+   "airline": "Avianca",
+   "cached": false,
+   "dest": "MAD",
+   "link": "https://www.google.com/travel/flights?q=Flights%20from%20LIM%20to%20MAD%20on%202027-02-01%20through%202027-04-02&curr=USD",
+   "note": "baggage unverified",
+   "price": 1205.0,
+   "source": "google_flights",
+   "stops_out": 1,
+   "stops_ret": null,
+   "ts": "2026-11-25T04:36:29+00:00",
+   "verified": false
   }
  },
  "paused": false,
  "serpapi": {
-  "credits": 2.0,
-  "last_accrual": "2026-11-25T02:23:04+00:00",
+  "credits": 0.7412433651851851,
+  "last_accrual": "2026-11-25T04:36:29+00:00",
   "pair_last_scan": {
-   "2027-02-01|2027-04-01": "2026-11-25T02:23:04+00:00"
+   "2027-02-01|2027-03-31": "2026-11-25T04:36:29+00:00",
+   "2027-02-01|2027-04-01": "2026-11-25T02:23:04+00:00",
+   "2027-02-01|2027-04-02": "2026-11-25T04:36:29+00:00"
   },
-  "searches_left": 249
+  "searches_left": 245
  },
  "sources": {
   "aviasales_cache": {
@@ -58,7 +100,7 @@
   },
   "google_flights": {
    "fail_streak": 0,
-   "last_ok": "2026-11-25T02:23:04+00:00",
+   "last_ok": "2026-11-25T04:36:29+00:00",
    "warned": false
   }
  },
