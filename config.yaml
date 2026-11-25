@@ -6,6 +6,7 @@
 trip:
   origin: LIM
   destination: MAD
+  alternative_destinations: [BCN]   # also searched, in the same Google search (no extra quota)
   adults: 1
   currency: USD
   outbound:
@@ -81,7 +82,7 @@ sources:
     enabled: false
     max_age_days: 3
     origin_keywords: [Lima, Peru, LIM]
-    destination_keywords: [Madrid, Spain, MAD]
+    destination_keywords: [Madrid, Barcelona, Spain, MAD, BCN]
     # Also alert on posts that mention "error fare"/"mistake fare" from your origin to anywhere in Europe:
     error_fare_keywords: [error fare, mistake fare, glitch]
     europe_keywords: [Europe, Spain, Madrid, Barcelona, Portugal, Lisbon, Italy, France, Paris]

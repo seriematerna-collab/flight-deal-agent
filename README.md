@@ -3,7 +3,7 @@
 An agent that runs free on GitHub Actions, checks flight prices on a schedule, and
 **emails you the deals** (sent from your own Gmail to yourself). No server and no monthly cost.
 
-- **Trip:** LIM → MAD round trip, 1 adult, USD. Outbound Jan 27–Feb 6 2027
+- **Trip:** LIM → MAD (and Barcelona, BCN, as an alternative; same search, no extra quota) round trip, 1 adult, USD. Outbound Jan 27–Feb 6 2027
   (preferred Feb 1), return Mar 25–Apr 8 2027 (preferred Apr 1), at most 1 stop and
   30 h each way. Change any of this in `config.yaml`.
 - **Price caps (total, bags included):** no bag $800, carry-on $1,000, checked bag $1,100.
@@ -196,7 +196,7 @@ instant reply, use **Run workflow** with mode **status**.
   ```bash
   pip install -r requirements-dev.txt
   python -m agent.main --demo        # offline demo with sample data, sends nothing
-  pytest -q                          # 41 tests
+  pytest -q                          # 43 tests
   export EMAIL_ADDRESS=... EMAIL_APP_PASSWORD=... SERPAPI_KEY=... TRAVELPAYOUTS_TOKEN=...
   python -m agent.main --dry-run --force-scan   # real scan, print instead of send
   python -m agent.main --test-alert
