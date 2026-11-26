@@ -63,6 +63,7 @@ sources:
     enabled: true
     monthly_budget: 240         # free plan = 250/month; 10 kept spare for manual tests
     max_bucket: 6               # most searches one run can spend
+    manual_scan_searches: 3     # extra searches when you run 'force-scan' by hand (taken from later days' share)
     enrich_alerts: true         # spend 2 extra searches to get return-leg details + bag prices for promising fares
     max_enrichments_per_run: 2      # each one costs 2 searches
     # How strongly to favour dates near the preferred ones (higher = more focus).
