@@ -53,8 +53,9 @@ def process_commands(notifier: EmailNotifier, store: Store, extra: list[str] | N
 
 # --------------------------------------------------------------------------- scan
 class ScanContext:
-    def __init__(self, cfg, secrets, http, tg, store, now):
+    def __init__(self, cfg, secrets, http, tg, store, now, bonus_searches: int = 0):
         self.cfg, self.secrets, self.http, self.tg, self.store, self.now = cfg, secrets, http, tg, store, now
+        self.bonus_searches = bonus_searches
         self.hits: list[DealHit] = []
 
     def ok(self, name: str) -> None:
@@ -144,6 +145,13 @@ def scan_google(ctx: ScanContext) -> None:
     if left is not None:
         state["searches_left"] = left
     credits = accrue_credits(ctx.cfg, ctx.store.state, ctx.now)
+    if ctx.bonus_searches:
+        # manual "search now": borrow from future days (the balance goes negative and refills over time)
+        cap = credits + ctx.bonus_searches
+        left_now = state.get("searches_left")
+        if isinstance(left_now, int):
+            cap = min(cap, max(0, left_now - 2))
+        credits = max(credits, cap)
     budget = int(credits)
     enrich_on = bool(sc.get("enrich_alerts", True))
     scan_n = budget - 2 if (enrich_on and budget >= 3) else budget
@@ -163,6 +171,8 @@ def scan_google(ctx: ScanContext) -> None:
     enriched = 0
     failed = None
     for o_d, r_d in pairs:
+        if credits - gf.searches_used < 1:
+            break    # enrichments used up this run's share
         key = f"{o_d.isoformat()}|{r_d.isoformat()}"
         try:
             offers, meta = gf.search_pair(o_d, r_d)
@@ -204,7 +214,8 @@ def scan_google(ctx: ScanContext) -> None:
         record_pair(offers, ctx.store, ctx.cfg, ctx.now)
         ctx.hits.extend(hits)
 
-    state["credits"] = max(0.0, credits - gf.searches_used)
+    state["credits"] = max(-30.0, float(state.get("credits", 0)) - gf.searches_used) if ctx.bonus_searches \
+        else max(0.0, credits - gf.searches_used)
     if isinstance(state.get("searches_left"), int):
         state["searches_left"] = max(0, state["searches_left"] - gf.searches_used)
     log.info("Google Flights: used %d searches (%d enrichments)", gf.searches_used, enriched)
@@ -320,7 +331,10 @@ def main(argv: list[str] | None = None) -> int:
         log.info('Paused: skipping scan and summary (email yourself "flights resume")')
     else:
         if args.force_scan or scan_due(cfg, store.state, now):
-            run_scan(ScanContext(cfg, secrets, http, tg, store, now))
+            bonus = int(cfg["sources"]["serpapi"].get("manual_scan_searches", 3)) if args.force_scan else 0
+            run_scan(ScanContext(cfg, secrets, http, tg, store, now, bonus))
+            if args.force_scan:
+                args.summary_now = True     # a manual search always emails you the results
         else:
             log.info("No scan due yet (last scan %s)", store.state.get("last_scan"))
         if args.summary_now or summary_due(cfg, store.state, now):
